@@ -1,0 +1,5 @@
+{
+  "name": "AI Resume Tailor",
+  "description": "An application that generates a tailored resume based on a job title, role focus, and a specific job description using the Gemini API.",
+  "requestFramePermissions": []
+}
