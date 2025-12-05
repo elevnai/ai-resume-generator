@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>AI Resume Tailor</title>
+    <style>
+      /* AMG G63 Inspired UI Styles */
+      body {
+        background-color: #0A0A0A;
+        /* Subtle leather grain texture overlaying a soft radial glow */
+        background-image:
+          radial-gradient(circle at top, rgba(79, 184, 255, 0.1), transparent 40%),
+          linear-gradient(rgba(26, 26, 26, 0.4) .05em, transparent .05em),
+          linear-gradient(90deg, rgba(26, 26, 26, 0.4) .05em, transparent .05em);
+        background-size: 100% 100%, 2em 2em, 2em 2em;
+      }
+
+      /* Custom slider styles for AMG cockpit feel */
+      input[type="range"].custom-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 2px;
+        background: #A8A9AD; /* Brushed Steel track */
+        border-radius: 2px;
+        outline: none;
+        transition: all .3s ease-in-out;
+      }
+
+      input[type="range"].custom-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #D9D9D9; /* AMG Chrome */
+        cursor: pointer;
+        border-radius: 50%;
+        border: 2px solid #0A0A0A;
+        box-shadow: 0 0 10px 2px rgba(79, 184, 255, 0.6); /* Ice Blue Glow */
+        transition: all .3s ease-in-out;
+      }
+      
+      input[type="range"].custom-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #D9D9D9;
+        cursor: pointer;
+        border-radius: 50%;
+        border: 2px solid #0A0A0A;
+        box-shadow: 0 0 10px 2px rgba(79, 184, 255, 0.6);
+        transition: all .3s ease-in-out;
+      }
+
+      input[type="range"].custom-slider:hover::-webkit-slider-thumb {
+        background: #FFFFFF;
+        box-shadow: 0 0 18px 5px rgba(79, 184, 255, 0.8);
+        transform: scale(1.1);
+      }
+      
+      input[type="range"].custom-slider:hover::-moz-range-thumb {
+        background: #FFFFFF;
+        box-shadow: 0 0 18px 5px rgba(79, 184, 255, 0.8);
+        transform: scale(1.1);
+      }
+
+      /* Custom Scrollbar for Webkit Browsers */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1A1A1A; /* matte-graphite */
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #A8A9AD; /* brushed-steel */
+        border-radius: 4px;
+        border: 2px solid #1A1A1A;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #D9D9D9; /* amg-chrome */
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'obsidian-black': '#0A0A0A',
+              'matte-graphite': '#1A1A1A',
+              'brushed-steel': '#A8A9AD',
+              'amg-chrome': '#D9D9D9',
+              'ice-blue': '#4FB8FF',
+            },
+            fontFamily: {
+              sans: ['"Inter"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+              headline: ['"Orbitron"', 'sans-serif'],
+              body: ['"Jura"', 'sans-serif'],
+            },
+            letterSpacing: {
+              'condensed': '-0.025em',
+              'wide-ui': '0.075em',
+              'widest-ui': '0.15em',
+            },
+            borderRadius: {
+              'xl': '0.75rem',
+            },
+            boxShadow: {
+              'glow-ice-blue': '0 0 12px 0px rgba(79, 184, 255, 0.4)',
+              'glow-ice-blue-strong': '0 0 20px 2px rgba(79, 184, 255, 0.6)',
+              'panel-shadow': '0px 10px 30px rgba(0, 0, 0, 0.5)',
+              'header-shadow': '0 4px 12px rgba(0,0,0,0.6)',
+              'deep-panel': '0 12px 36px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.05)',
+              'input-inset': 'inset 0 3px 6px rgba(0,0,0,0.6)',
+              'button-shadow': '0 4px 10px rgba(0,0,0,0.5)',
+              'soft-underglow': '0 0 60px -10px rgba(79, 184, 255, 0.3)',
+            },
+            animation: {
+              'cockpit-startup-left': 'cockpitStartupLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'cockpit-startup-right': 'cockpitStartupRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'header-sweep': 'headerSweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'button-pulse': 'buttonPulse 3s infinite ease-in-out',
+              'engine-start': 'engineStart 0.5s ease-out forwards',
+              'blink': 'blink 1s step-end infinite',
+              'shine-sweep': 'shineSweep 3s linear 1s infinite',
+              'pulse-halo-1': 'pulseHalo1 3s infinite cubic-bezier(0.4, 0, 0.6, 1)',
+              'pulse-halo-2': 'pulseHalo2 3s 0.5s infinite cubic-bezier(0.4, 0, 0.6, 1)',
+              'scan-line': 'scanLine 2.5s linear infinite',
+              'orb-idle-pulse': 'orbIdlePulse 4s infinite ease-in-out',
+              'orb-rotate': 'orbRotate 25s linear infinite',
+              'orb-rotate-fast': 'orbRotate 2s linear infinite',
+              'orb-generating-pulse': 'orbGeneratingPulse 2s infinite cubic-bezier(0.2, 0.6, 0.3, 1)',
+              'ambient-glow': 'ambientGlow 8s infinite ease-in-out',
+            },
+            keyframes: {
+              cockpitStartupLeft: {
+                '0%': { opacity: '0', transform: 'translateX(-40px) scale(0.98)' },
+                '100%': { opacity: '1', transform: 'translateX(0) scale(1)' },
+              },
+              cockpitStartupRight: {
+                '0%': { opacity: '0', transform: 'translateX(40px) scale(0.98)' },
+                '100%': { opacity: '1', transform: 'translateX(0) scale(1)' },
+              },
+              headerSweep: {
+                '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              buttonPulse: {
+                '0%, 100%': { 
+                  boxShadow: '0 0 15px 0px rgba(79, 184, 255, 0.3), 0 4px 10px rgba(0,0,0,0.5)',
+                  transform: 'scale(1.0)'
+                },
+                '50%': { 
+                  boxShadow: '0 0 25px 4px rgba(79, 184, 255, 0.5), 0 4px 10px rgba(0,0,0,0.5)',
+                  transform: 'scale(1.01)'
+                },
+              },
+              engineStart: {
+                '0%': { transform: 'scale(1.00)' },
+                '50%': { transform: 'scale(0.97)', boxShadow: '0 0 40px 8px rgba(79, 184, 255, 0.7)' },
+                '100%': { transform: 'scale(1.00)', boxShadow: '0 0 22px 3px rgba(79, 184, 255, 0.5)' },
+              },
+              blink: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0' },
+              },
+              shineSweep: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(200%)' },
+              },
+              pulseHalo1: {
+                '0%, 100%': { transform: 'scale(0.8)', opacity: '0' },
+                '50%': { transform: 'scale(1.2)', opacity: '1' },
+              },
+              pulseHalo2: {
+                  '0%, 100%': { transform: 'scale(0.8)', opacity: '0' },
+                  '50%': { transform: 'scale(1.5)', opacity: '0.7' },
+              },
+              scanLine: {
+                  '0%': { transform: 'translateY(-100%)' },
+                  '100%': { transform: 'translateY(2500%)' },
+              },
+              orbIdlePulse: {
+                '0%, 100%': { 
+                    transform: 'scale(1.0)',
+                    boxShadow: '0 0 20px -5px rgba(79, 184, 255, 0.4)'
+                },
+                '50%': { 
+                    transform: 'scale(1.02)',
+                    boxShadow: '0 0 35px -5px rgba(79, 184, 255, 0.6)'
+                },
+              },
+              orbRotate: {
+                  'from': { transform: 'rotate(0deg)' },
+                  'to': { transform: 'rotate(360deg)' }
+              },
+              orbGeneratingPulse: {
+                  '0%': { transform: 'scale(0.8)', opacity: '0.5' },
+                  '100%': { transform: 'scale(1.5)', opacity: '0' },
+              },
+              ambientGlow: {
+                '0%, 100%': {
+                  boxShadow: '0 0 10px rgba(79, 184, 255, 0.2), 0 0 5px rgba(79, 184, 255, 0.3) inset',
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  boxShadow: '0 0 18px rgba(79, 184, 255, 0.4), 0 0 8px rgba(79, 184, 255, 0.4) inset',
+                  transform: 'scale(1.02)',
+                },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Jura:wght@400;500&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.1",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "docx": "https://esm.sh/docx@8.5.0",
+    "file-saver": "https://esm.sh/file-saver@2.0.5"
+  }
+}
+</script>
+</head>
+  <body class="bg-obsidian-black">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
